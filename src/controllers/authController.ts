@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import pool from "../db";
+import pool from "../db"; // Ensure your database connection is set up correctly
 import { generateRandomPassword } from "../utils/passwordutils";
 import nodemailer from "nodemailer";
 
-const secretKey = process.env.SECRET_KEY || "my-secret-key";
+const secretKey = process.env.SECRET_KEY || "your_jwt_secret_key";
 
 export const login = async (req: Request, res: Response) => {
   const { email, pass } = req.body;
@@ -21,17 +21,23 @@ export const login = async (req: Request, res: Response) => {
     );
     if (Array.isArray(rows) && rows.length > 0) {
       const user = rows[0];
-      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: "1h" });
+      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: "1m" });
       res.status(200).send({ msg: "Login Successful", auth: true, token });
     } else {
       res.status(401).send("Invalid email or password");
     }
   } catch (err) {
+    console.error(err);
     res.status(500).send("Internal server error");
   } finally {
     connection.release();
   }
 };
+
+export const protectedRoute = (req: Request, res: Response) => {
+  res.status(200).send("Token is valid and user is authenticated.");
+};
+
 
 export const resetPassword = async (req: Request, res: Response) => {
   const { email } = req.body;
