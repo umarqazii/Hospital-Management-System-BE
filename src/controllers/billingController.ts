@@ -1,20 +1,6 @@
 import e, { Request, Response } from "express";
 import pool from "../db";
 
-// CREATE TABLE invoices (
-//     invoice_id INT PRIMARY KEY AUTO_INCREMENT,
-//     patient_id INT,
-//     doctor_id INT,
-//     consultation_fee INT,
-//     hospital_charges INT,
-//     equipment_charges INT,
-//     medicine_charges INT,
-//     total_amount INT,
-//     invoice_date DATE,
-//     status ENUM('unpaid', 'paid') DEFAULT 'unpaid',
-//     FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
-//     FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
-// );
 
 export const addInvoice = async (req: Request, res: Response) => {
     const { patient_id, doctor_id, consultation_fee, hospital_charges, equipment_charges, medicine_charges, total_amount } = req.body;
@@ -34,3 +20,19 @@ export const addInvoice = async (req: Request, res: Response) => {
     }
     
   };
+
+  // get all invoices
+
+  export const getAllInvoices = async (req: Request, res: Response) => {
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.query("SELECT * FROM invoices");
+        res.status(200).send(rows);
+    } catch (err) {
+        res.status(500).send("Internal server error");
+    } finally {
+        connection.release();
+    }
+    }
+
+    

@@ -6,6 +6,10 @@ import nodemailer from "nodemailer";
 
 const secretKey = process.env.SECRET_KEY || "your_jwt_secret_key";
 
+export const getFunction = (req: Request, res: Response) => {
+  res.status(200).send("Hello World");
+}
+
 export const login = async (req: Request, res: Response) => {
   const { email, pass } = req.body;
 
@@ -21,7 +25,7 @@ export const login = async (req: Request, res: Response) => {
     );
     if (Array.isArray(rows) && rows.length > 0) {
       const user = rows[0];
-      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: "1m" });
+      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: "1h" });
       res.status(200).send({ msg: "Login Successful", auth: true, token });
     } else {
       res.status(401).send("Invalid email or password");

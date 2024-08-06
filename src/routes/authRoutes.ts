@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { login, resetPassword, protectedRoute } from "../controllers/authController";
+import { login, resetPassword, protectedRoute, getFunction } from "../controllers/authController";
 import { authenticateToken } from "../middleware/auth";
 
 const router = Router();
-
+router.get("/", getFunction);
 router.post("/login", login);
 router.get("/protected", authenticateToken, protectedRoute);
 router.post("/reset-password", resetPassword);
